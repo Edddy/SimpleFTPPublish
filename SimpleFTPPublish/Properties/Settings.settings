@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Bizcacha.App.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Pasivo" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TargetURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ftp://ftp.bizcacha.com/Public</Value>
+    </Setting>
+    <Setting Name="Usuario" Type="System.String" Scope="User">
+      <Value Profile="(Default)">LartiFTP</Value>
+    </Setting>
+    <Setting Name="Clave" Type="System.String" Scope="User">
+      <Value Profile="(Default)">lrt3221</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
