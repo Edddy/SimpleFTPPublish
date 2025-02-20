@@ -40,6 +40,10 @@ namespace Bizcacha.App {
             Pasivo = Properties.Settings.Default.Pasivo;
             for (int i = 0; i < args.Length; i++) {
                 if (args[i].ToLower() == "-dontupload") DontUploadOnlyCreateLocalData = true;
+                if (args[i].ToString().Contains("?")) { 
+                    Log("-dontupload: Graba el log pero no sube nada");
+                    return;
+                };
             }
             
             Log("Uploading to " + TargetURL);
@@ -250,7 +254,7 @@ namespace Bizcacha.App {
 				|| name == "simpleftppublish.exe.config" 
 				|| name == "simpleftppublish.xml" 
 				|| ext == ".cs" 
-				|| ext == ".vb" || ext == ".resx" || ext == ".csproj" || ext == ".user" || ext == ".exe");
+				|| ext == ".vb" || ext == ".resx" || ext == ".csproj" || ext == ".user");
         }
 
         public static void Log(string msg) {
