@@ -11,6 +11,8 @@ using System.Diagnostics;
 // pendiente de implementar la borrada en el servidor de archivos 
 // que dejaron de existir
 
+// Si hay problemas de conexion ver esto https://stackoverflow.com/questions/20961425/cant-upload-to-iis-ftp-website-with-different-host-using-ftpwebrequest-530-val
+
 namespace Bizcacha.App {
     static class Program {
 
