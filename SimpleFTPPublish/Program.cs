@@ -23,6 +23,8 @@ namespace Bizcacha.App {
         static int SinModificacion = 0;
         static int ConErrorAlSubir = 0;
         static bool Pasivo = true;
+        static bool EnableSsl = false;
+        static bool KeepAlive = false;
         static bool DontUploadOnlyCreateLocalData = false;
 
         static void Main(string[] args) {
@@ -38,6 +40,8 @@ namespace Bizcacha.App {
             Usuario = Properties.Settings.Default.Usuario;
             Clave = Properties.Settings.Default.Clave;
             Pasivo = Properties.Settings.Default.Pasivo;
+            EnableSsl = Properties.Settings.Default.EnableSsl;
+            KeepAlive = Properties.Settings.Default.EnableSsl;
             for (int i = 0; i < args.Length; i++) {
                 if (args[i].ToLower() == "-dontupload") DontUploadOnlyCreateLocalData = true;
                 if (args[i].ToString().Contains("?")) { 
@@ -45,6 +49,9 @@ namespace Bizcacha.App {
                     return;
                 };
             }
+
+            //TestConnection();
+            //return;
             
             Log("Uploading to " + TargetURL);
             
@@ -182,6 +189,8 @@ namespace Bizcacha.App {
                 request.Method = WebRequestMethods.Ftp.UploadFile;
                 request.Credentials = new NetworkCredential(Usuario, Clave);
                 request.UsePassive = Pasivo;
+                request.EnableSsl = EnableSsl;
+                request.KeepAlive = KeepAlive;
 
                 // Copy the contents of the file to the request stream.
                 byte[] fileContents = System.IO.File.ReadAllBytes(file); 
@@ -225,6 +234,8 @@ namespace Bizcacha.App {
                 request.Credentials = new NetworkCredential(Usuario, Clave);
                 request.Method = WebRequestMethods.Ftp.MakeDirectory;
                 request.UsePassive = Pasivo;
+                request.EnableSsl = EnableSsl;
+                request.KeepAlive = KeepAlive;
 
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             }
@@ -279,6 +290,68 @@ namespace Bizcacha.App {
             }
                 
         }
+
+
+        static bool TestConnection() {
+            try {
+                // Extract base URL from TargetURL and remove any credentials
+                var testUrl = TargetURL;
+                Log($"Testing connection to {testUrl}");
+
+                // Try different combinations of settings
+                bool[,] settings = new bool[,] {
+                    { true, false, false },   // Passive, no SSL, no KeepAlive
+                    { true, false, true },    // Passive, no SSL, KeepAlive
+                    { false, false, false },  // Active, no SSL, no KeepAlive
+                    { false, false, true }   // Active, no SSL, KeepAlive
+                };
+
+                for (int i = 0; i < settings.GetLength(0); i++) {
+                    try {
+                        Log($"Trying with Passive={settings[i, 0]}, SSL={settings[i, 1]}, KeepAlive={settings[i, 2]}");
+
+                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(testUrl);
+                        request.Credentials = new NetworkCredential(Usuario, Clave);
+                        request.UsePassive = settings[i, 0];
+                        request.EnableSsl = settings[i, 1];
+                        request.KeepAlive = settings[i, 2];
+                        request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+                        request.Timeout = 10000; // 10 second timeout
+
+                        using (FtpWebResponse response = (FtpWebResponse)request.GetResponse()) {
+                            Log($"Success! Connection settings: Passive={settings[i, 0]}, SSL={settings[i, 1]}, KeepAlive={settings[i, 2]}");
+                            Log($"Server response: {response.StatusDescription}");
+                            Log($"Banner message: {response.BannerMessage}");
+                            Log($"Welcome message: {response.WelcomeMessage}");
+
+                            // Save the working settings
+                            Pasivo = settings[i, 0];
+                            EnableSsl = settings[i, 1];
+                            KeepAlive = settings[i, 2];
+
+                            return true;
+                        }
+                    }
+                    catch (WebException wex) {
+                        string errorDetails = wex.Response != null ?
+                            ((FtpWebResponse)wex.Response).StatusDescription :
+                            wex.Message;
+                        Log($"Failed with settings combination {i + 1}: {errorDetails}");
+                    }
+                    catch (Exception ex) {
+                        Log($"Failed with settings combination {i + 1}: {ex.Message}");
+                    }
+                }
+
+                Log("All connection attempts failed");
+                return false;
+            }
+            catch (Exception ex) {
+                Log($"Fatal error during connection test: {ex.Message}");
+                return false;
+            }
+        }
+
 
     }
 }

@@ -70,5 +70,29 @@ namespace Bizcacha.App.Properties {
                 this["Clave"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableSsl {
+            get {
+                return ((bool)(this["EnableSsl"]));
+            }
+            set {
+                this["EnableSsl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool KeepAlive {
+            get {
+                return ((bool)(this["KeepAlive"]));
+            }
+            set {
+                this["KeepAlive"] = value;
+            }
+        }
     }
 }
